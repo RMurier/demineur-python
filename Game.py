@@ -43,18 +43,13 @@ class Game(object):
                     pass
                 self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 3)
             elif clic == "R": #si clic relaché
-                print(-1)
                 if coosBefore == (x, y):
-                    print(0)
                     if self.grid.grid[y][x] == -1:
-                        print(0)
                         if self.grid.bombGrid[y][x] == 1:
-                            print(1)
                             self.grid.grid[y][x] = -5
                             self.gui.gameOver()
                             time.sleep(1)
                         else:
-                            print(1)
                             self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
 
