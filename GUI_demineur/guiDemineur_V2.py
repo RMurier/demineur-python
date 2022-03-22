@@ -43,7 +43,7 @@ class GUIdemineur (object):
         self.rectC = pygame.Rect(self.wFen //3, 0, self.wFen //3, self.hBandeau)
         self.rectD = pygame.Rect(2*self.wFen //3, 0, self.wFen //3, self.hBandeau)
         #on définit la fenêtre de base de notre jeu
-        self.fond = pygame.display.set_mode((self.wFen, hFen))
+        self.fond = pygame.display.set_mode((self.wFen, hFen), RESIZABLE)
         #un titre sur cette fenêtre
         pygame.display.set_caption("Démineur")
 

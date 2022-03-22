@@ -3,6 +3,7 @@ import time
 
 from GUI_demineur.guiDemineur_V2 import *
 from Grille import Grille
+from ScoreBoard import ScoreBoard
 
 class Game(object):
 
@@ -10,6 +11,7 @@ class Game(object):
         """
         Permet l'initialisation du jeu.
         """
+        self.scoreboard = ScoreBoard()
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
         self.grid = Grille(long)
         self.flagputted = 0
@@ -17,9 +19,7 @@ class Game(object):
         
     def start(self):
         """
-        Boucle de jeu principale :
-            - Reçoit les clics
-            - 
+        Boucle de jeu principale
         Elle permet de gérer chaque itération de la boucle, du début jusqu'à la fin (Game Over ou Win)
         """
         coosBefore = None
