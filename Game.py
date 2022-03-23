@@ -11,7 +11,7 @@ class Game(object):
         """
         Permet l'initialisation du jeu.
         """
-        self.scoreboard = ScoreBoard()
+        # self.scoreboard = ScoreBoard()
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
         self.grid = Grille(long)
         self.flagputted = 0
@@ -51,6 +51,7 @@ class Game(object):
                             time.sleep(1)
                         else:
                             self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
+                            self.propagation((y, x))
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
 
                 
@@ -59,8 +60,19 @@ class Game(object):
         """
         Regarde si une case vide est cliqué. Si oui, propage l'ouverture des cases situés à coté qui sont aussi vides.
         """
-        pass
-
+        y, x = case
+        print(y,x)
+        self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
+        if self.grid.grid[y][x] != 0:
+            return
+        if x > 0 and self.grid.grid[y][x-1] == -1: #gauche
+            self.propagation((y, x-1))
+        if x < len(self.grid.bombGrid[0]) - 1 and self.grid.grid[y][x+1] == -1: #droite
+            self.propagation((y, x+1))
+        if y > 0 and self.grid.grid[y-1][x] == -1: #haut
+            self.propagation((y-1, x))
+        if y < len(self.grid.bombGrid) - 1 and self.grid.grid[y+1][x] == -1: #bas
+            self.propagation((y+1, x))
 
 
 if __name__ == '__main__' :
