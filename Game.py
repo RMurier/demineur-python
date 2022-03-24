@@ -11,9 +11,9 @@ class Game(object):
         """
         Permet l'initialisation du jeu.
         """
-        # self.scoreboard = ScoreBoard()
+        self.scoreboard = ScoreBoard()
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
-        self.grid = Grille(long)
+        self.grid = Grille(long, 50)
         self.flagputted = 0
         self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
         
@@ -73,6 +73,14 @@ class Game(object):
             self.propagation((y-1, x))
         if y < len(self.grid.bombGrid) - 1 and self.grid.grid[y+1][x] == -1: #bas
             self.propagation((y+1, x))
+        if x > 0 and y > 0 and self.grid.grid[x+1][y+1]: #haut gauche:
+            self.propagation((y-1, x-1))
+        if x < len(self.grid.bombGrid[0]) - 1 and y > 0 and self.grid.grid[y-1][x+1]: #haut droit
+            self.propagation((y-1, x+1))
+        if x > 0 and y < len(self.grid.bombGrid) - 1 and self.grid.grid[y+1][x-1]: #bas gauche
+            self.propagation((y+1, x-1))
+        if x < len(self.grid.bombGrid[0]) - 1 and y < len(self.grid.bombGrid) - 1 and self.grid.grid[y+1][x+1]:
+            self.propagation((y+1, x+1))
 
 
 if __name__ == '__main__' :
