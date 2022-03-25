@@ -39,3 +39,37 @@ class Grille(object):
         nb += 1 if (x > 0 and y < len(self.bombGrid) -1) and self.bombGrid[y+1][x-1] == 1 else 0 #bas gauche
         nb += 1 if (x < len(self.bombGrid[0]) -1 and y < len(self.bombGrid) -1) and self.bombGrid[y+1][x+1] == 1 else 0
         return nb
+
+    def propagation(self, case):
+        """
+        Regarde si une case vide est cliqué. Si oui, propage l'ouverture des cases situés à coté qui sont aussi vides.
+        """
+        y, x = case
+        print(y,x)
+        self.grid[y][x] = self.grid.numberNeighborBomb(x, y)
+        if self.grid[y][x] != 0:
+            return
+
+        if x > 0 and self.grid[y][x-1] == -1: #gauche
+            self.propagation((y, x-1))
+
+        if x < len(self.grid.bombGrid[0]) - 1 and self.grid[y][x+1] == -1: #droite
+            self.propagation((y, x+1))
+
+        if y > 0 and self.grid[y-1][x] == -1: #haut
+            self.propagation((y-1, x))
+
+        if y < len(self.grid.bombGrid) - 1 and self.grid[y+1][x] == -1: #bas
+            self.propagation((y+1, x))
+
+        if x > 0 and y > 0 and self.grid[y-1][x-1] == -1: #haut gauche:
+            self.propagation((y-1, x-1))
+
+        if x < len(self.grid.bombGrid[0]) - 1 and y > 0 and self.grid[y-1][x+1] == -1: #haut droit
+            self.propagation((y-1, x+1))
+
+        if x > 0 and y < len(self.grid.bombGrid) - 1 and self.grid[y+1][x-1] == -1: #bas gauche
+            self.propagation((y+1, x-1))
+
+        if x < len(self.grid.bombGrid[0]) - 1 and y < len(self.grid.bombGrid) - 1 and self.grid[y+1][x+1] == -1:
+            self.propagation((y+1, x+1))
