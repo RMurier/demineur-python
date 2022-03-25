@@ -1,6 +1,8 @@
 from random import randint
 import time
 
+from matplotlib.pyplot import grid
+
 from GUI_demineur.guiDemineur_V2 import *
 from Grille import Grille
 from ScoreBoard import ScoreBoard
@@ -13,7 +15,7 @@ class Game(object):
         """
         self.scoreboard = ScoreBoard()
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
-        self.grid = Grille(long, 99)
+        self.grid = Grille(long, 15)
         self.flagputted = 0
         self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
         
@@ -45,7 +47,7 @@ class Game(object):
             elif clic == "R": #si clic relaché
                 if coosBefore == (x, y):
                     if self.grid.grid[y][x] == -1:
-                        if self.grid.bombGrid[y][x] == 1:
+                        if self.grid.bombGrid[y][x] == 1: #si click sur une bombe
                             self.grid.grid[y][x] = -5
                             self.gui.gameOver()
                             self.gui.stopTime()
@@ -53,7 +55,17 @@ class Game(object):
                         else:
                             self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
                             self.grid.propagation((y, x))
+                            if self.isWin(): #si fin de partie
+                                self.gui.gagne()
+                                time.sleep(2)
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
+    
+    def isWin(self):
+        for y in range(len(self.grid.bombGrid)):
+            for x in range(len(self.grid.bombGrid[0])):
+                if self.grid.grid[y][x] == -1 and self.grid.bombGrid[y][x] != 1:
+                    return False
+        return True
 
             
 
