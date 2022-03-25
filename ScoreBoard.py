@@ -2,9 +2,37 @@ import pygame
 from pygame.locals import *
 import os
 from win32api import GetSystemMetrics
+import re
 
 from Data.database_handler import DataBaseHandler
 database_handler = DataBaseHandler("madb.db")
+
+username_re = re.compile(r"[^a-zA-Z]")
+
+def convert_time(a:int):
+    d = 0
+    h = 0
+    m = 0
+    while a > 59:
+        if a >= 86400:
+            d += 1
+            a -= 86400
+        elif a >= 3600:
+            h += 1
+            a -= 3600
+        elif a >= 60:
+            m += 1
+            a -= 60
+    msg = ""
+    if d != 0:
+        msg += f"{d}j "
+    if h != 0:
+        msg += f"{h}h "
+    if m != 0:
+        msg += f"{m}m "
+    if a != 0:
+        msg += f"{a}s"
+    return msg
 
 class ScoreBoard(object):
     
@@ -33,7 +61,7 @@ class ScoreBoard(object):
         #bouton classement
         pygame.Rect((GetSystemMetrics(0)//2-250, GetSystemMetrics(1), 500, 50))
         self.imgclassment = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
-
+        self.rect1 = self.rect2 = self.rect3 = self.rect4 = self.rect5 = None
         #bouton dans le menu classement
         self.returnhome = None
 
@@ -50,16 +78,14 @@ class ScoreBoard(object):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.imgplay.collidepoint(event.pos):
                         self.username = self.username.lower()
-                        print()
                         return
                     elif self.imgclassment.collidepoint(event.pos):
-                        print("classement")
                         self.showScoreBoard()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
                         self.username = self.username[:-1]
                     else:
-                        self.username += event.unicode if event.unicode != " " else ""
+                        self.username += username_re.sub("", event.unicode)
                     self.txt_surface = self.font.render(self.username, True, self.color)
                     self.update()
                 self.draw()
@@ -79,6 +105,11 @@ class ScoreBoard(object):
     def showScoreBoard(self):
         self.screen.blit(pygame.transform.scale( pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\welcome.png")) ,(GetSystemMetrics(0), GetSystemMetrics(1))), [0, 0])
         self.returnhome = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
+        scoreboard = self.scoreboard()
+        for i in range(len(scoreboard)):
+            rect = pygame.Rect(GetSystemMetrics(0)//4, GetSystemMetrics(1)//2+i*50, 100, 50)
+            text = self.font.render(f"{scoreboard[i][0]} a terminé le démineur en {convert_time(scoreboard[i][1])}", True, self.colorinput)
+            self.screen.blit(text, rect)
         self.waitClickScoreBoard()
 
     def waitClickScoreBoard(self):
@@ -90,7 +121,6 @@ class ScoreBoard(object):
                     exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.returnhome.collidepoint(event.pos):
-                        print("return scoreboard")
                         return
             pygame.display.update()
 
@@ -98,7 +128,7 @@ class ScoreBoard(object):
         """
         Retourne le top 10 des meilleurs score sous forme de liste
         """
-        print(database_handler.scoreboard())
+        return database_handler.scoreboard()
 
     def fetchUser(self):
         """

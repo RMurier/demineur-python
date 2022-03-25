@@ -45,7 +45,7 @@ class DataBaseHandler():
 
     def scoreboard(self):
         cursor = self.con.cursor()
-        query = "SELECT * FROM score ORDER BY score DESC LIMIT(5)"
+        query = "SELECT username, score FROM score JOIN users USING(id) ORDER BY score LIMIT(5)"
         cursor.execute(query)
         result = list(map(list, cursor.fetchall()))
         cursor.close()

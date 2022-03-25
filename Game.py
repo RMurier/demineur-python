@@ -48,6 +48,7 @@ class Game(object):
                         if self.grid.bombGrid[y][x] == 1:
                             self.grid.grid[y][x] = -5
                             self.gui.gameOver()
+                            self.gui.stopTime()
                             time.sleep(1)
                         else:
                             self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)

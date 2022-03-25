@@ -29,6 +29,9 @@ class Grille(object):
                 break
 
     def numberNeighborBomb(self, x, y):
+        """
+        Donne le nombre de bombes dans les voisins de la grille en coordonnée y / x
+        """
         nb = 0
         nb += 1 if x > 0 and self.bombGrid[y][x-1] == 1 else 0 #gauche
         nb += 1 if x < len(self.bombGrid[0]) -1 and self.bombGrid[y][x+1] == 1 else 0 #droite
@@ -42,34 +45,34 @@ class Grille(object):
 
     def propagation(self, case):
         """
-        Regarde si une case vide est cliqué. Si oui, propage l'ouverture des cases situés à coté qui sont aussi vides.
+        Regarde si une case vide est cliqué et propage l'ouverture des cases situés à coté qui sont aussi vides si c'est le cas.
         """
         y, x = case
         print(y,x)
-        self.grid[y][x] = self.grid.numberNeighborBomb(x, y)
+        self.grid[y][x] = self.numberNeighborBomb(x, y)
         if self.grid[y][x] != 0:
             return
 
         if x > 0 and self.grid[y][x-1] == -1: #gauche
             self.propagation((y, x-1))
 
-        if x < len(self.grid.bombGrid[0]) - 1 and self.grid[y][x+1] == -1: #droite
+        if x < len(self.bombGrid[0]) - 1 and self.grid[y][x+1] == -1: #droite
             self.propagation((y, x+1))
 
         if y > 0 and self.grid[y-1][x] == -1: #haut
             self.propagation((y-1, x))
 
-        if y < len(self.grid.bombGrid) - 1 and self.grid[y+1][x] == -1: #bas
+        if y < len(self.bombGrid) - 1 and self.grid[y+1][x] == -1: #bas
             self.propagation((y+1, x))
 
         if x > 0 and y > 0 and self.grid[y-1][x-1] == -1: #haut gauche:
             self.propagation((y-1, x-1))
 
-        if x < len(self.grid.bombGrid[0]) - 1 and y > 0 and self.grid[y-1][x+1] == -1: #haut droit
+        if x < len(self.bombGrid[0]) - 1 and y > 0 and self.grid[y-1][x+1] == -1: #haut droit
             self.propagation((y-1, x+1))
 
-        if x > 0 and y < len(self.grid.bombGrid) - 1 and self.grid[y+1][x-1] == -1: #bas gauche
+        if x > 0 and y < len(self.bombGrid) - 1 and self.grid[y+1][x-1] == -1: #bas gauche
             self.propagation((y+1, x-1))
 
-        if x < len(self.grid.bombGrid[0]) - 1 and y < len(self.grid.bombGrid) - 1 and self.grid[y+1][x+1] == -1:
+        if x < len(self.bombGrid[0]) - 1 and y < len(self.bombGrid) - 1 and self.grid[y+1][x+1] == -1: #bas droit
             self.propagation((y+1, x+1))
