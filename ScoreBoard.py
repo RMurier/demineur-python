@@ -43,6 +43,7 @@ class ScoreBoard(object):
         """
         self.username = ""
         self.userid = None
+        self.usernameError = False
 
         pygame.init()
         self.screen = pygame.display.set_mode((GetSystemMetrics(0), GetSystemMetrics(1)), RESIZABLE) #création de la fênêtre
@@ -75,21 +76,33 @@ class ScoreBoard(object):
                 if event.type == QUIT:
                     pygame.quit()
                     exit()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.imgplay.collidepoint(event.pos):
                         self.username = self.username.lower()
+                        if len(self.username) == 0:
+                            self.draw()
+                            rect = pygame.Rect(GetSystemMetrics(0)//4, GetSystemMetrics(1)//4, 100, 50)
+                            text = self.font.render(f"Le pseudonyme est vide !", True, self.colorinput)
+                            self.screen.blit(text, rect)
+                            pygame.display.update()
+                            continue
                         return
                     elif self.imgclassment.collidepoint(event.pos):
                         self.showScoreBoard()
-                if event.type == pygame.KEYDOWN:
+
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
                         self.username = self.username[:-1]
                     else:
                         self.username += username_re.sub("", event.unicode)
                     self.txt_surface = self.font.render(self.username, True, self.color)
                     self.update()
+                else:
+                    continue
+
                 self.draw()
-            pygame.display.update()
+                pygame.display.update()
     
     def update(self):
         self.rectinput.w = max(500, self.txt_surface.get_width()+10)

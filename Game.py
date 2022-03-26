@@ -15,6 +15,7 @@ class Game(object):
         """
         self.scoreboard = ScoreBoard()
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
+        self.gui.stopTime()
         self.grid = Grille(long, 15)
         self.flagputted = 0
         self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
@@ -25,9 +26,8 @@ class Game(object):
         Elle permet de gérer chaque itération de la boucle, du début jusqu'à la fin (Game Over ou Win)
         """
         coosBefore = None
-        self.gui.startTime()
         while True:
-            x, y, clic = self.gui.waitClick() # renvoie les coordonnées de la case et du clic
+            x, y, clic = self.gui.waitClick() # renvoie les coordonnées de la case et le type de clic
             if clic == "D" : #si clic droit
                 if self.grid.grid[y][x] == -1:
                     if self.flagputted != self.grid.nbBomb:
@@ -57,6 +57,7 @@ class Game(object):
                             self.grid.propagation((y, x))
                             if self.isWin(): #si fin de partie
                                 self.gui.gagne()
+                                self.gui.stopTime()
                                 time.sleep(2)
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
     

@@ -48,7 +48,6 @@ class Grille(object):
         Regarde si une case vide est cliqué et propage l'ouverture des cases situés à coté qui sont aussi vides si c'est le cas.
         """
         y, x = case
-        print(y,x)
         self.grid[y][x] = self.numberNeighborBomb(x, y)
         if self.grid[y][x] != 0:
             return
