@@ -3,6 +3,7 @@ from pygame.locals import *
 import os
 from win32api import GetSystemMetrics
 import re
+import time
 
 from Data.database_handler import DataBaseHandler
 database_handler = DataBaseHandler("madb.db")
@@ -52,9 +53,12 @@ class ScoreBoard(object):
         #input:
         self.rectinput = pygame.Rect((GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.5, 500, 50))
         self.color = pygame.Color(0,0,0) #couleur de texte
-        self.colorinput = pygame.Color(166, 62, 197  ) #couleur de l'input
+        self.colorinput = pygame.Color(166, 62, 197) #couleur de l'input
         self.txt_surface = self.font.render("Entrez votre pseudo !", True, self.color)
-        
+
+        self.txt_rect = self.txt_surface.get_rect()
+        self.cursor = pygame.Rect(self.txt_rect.topright, (3, self.txt_rect.height + 2))
+
         #bouton play
         pygame.Rect((GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.5, 500, 50))
         self.imgplay = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\play.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.3))
@@ -66,24 +70,36 @@ class ScoreBoard(object):
         #bouton dans le menu classement
         self.returnhome = None
 
+        #curseur
+        pygame.mouse.set_visible(False)  # hide the cursor
+        self.cursor = pygame.image.load(os.path.join(os.path.dirname(__file__), 'cursor.png')).convert_alpha()
+
         self.update()
         self.draw()
+        pygame.display.update()
         self.waitClick()
 
     def waitClick(self):
         while True:
+            pygame.time.Clock().tick(10)
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     exit()
 
+                if event.type == pygame.MOUSEMOTION:
+                    self.draw()
+                    self.screen.blit(self.cursor, (pygame.mouse.get_pos()))
+                    pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.imgplay.collidepoint(event.pos):
                         self.username = self.username.lower()
                         if len(self.username) == 0:
                             self.draw()
-                            rect = pygame.Rect(GetSystemMetrics(0)//4, GetSystemMetrics(1)//4, 100, 50)
-                            text = self.font.render(f"Le pseudonyme est vide !", True, self.colorinput)
+                            rect = pygame.Rect(GetSystemMetrics(0)//2, 0, 100, 50)
+                            text = self.font.render(f"Le pseudonyme est vide !", True, pygame.Color(255, 0, 0), pygame.Color(0, 0, 0))
+                            rect.centerx = GetSystemMetrics(0) // 2 - text.get_width()//2 + 50
                             self.screen.blit(text, rect)
                             pygame.display.update()
                             continue
@@ -94,18 +110,22 @@ class ScoreBoard(object):
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
                         self.username = self.username[:-1]
+                        self.update()
+                        
                     else:
                         self.username += username_re.sub("", event.unicode)
                     self.txt_surface = self.font.render(self.username, True, self.color)
                     self.update()
                 else:
-                    continue
+                    break
 
-                self.draw()
-                pygame.display.update()
+                self.screen.blit(self.txt_surface, (self.rectinput.x + 5, self.rectinput.y + 10))
+                pygame.draw.rect(self.screen, self.color, self.rectinput, 1)
     
     def update(self):
         self.rectinput.w = max(500, self.txt_surface.get_width()+10)
+        if self.rectinput.w == 500:
+            self.draw()
         self.rectinput.left = GetSystemMetrics(0)//2-self.rectinput.width//2
 
     def draw(self):

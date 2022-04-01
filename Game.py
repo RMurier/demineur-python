@@ -1,8 +1,6 @@
 from random import randint
 import time
 
-from matplotlib.pyplot import grid
-
 from GUI_demineur.guiDemineur_V2 import *
 from Grille import Grille
 from ScoreBoard import ScoreBoard
