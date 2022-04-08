@@ -2,13 +2,14 @@ import random
 
 class Grille(object):
     """
-    Initialisation de la grille, qui est utiliser pour générer une grille, ainsi qu'effectuer une modification sur cette dernière.
+    Initialisation de la classe, qui est utilisée pour générer une grille, ainsi qu'effectuer une modification sur cette dernière.
     Elle prends plusieurs paramètres:
-    - La longueure n (définite sur 40 par défaut dans Game), qui définis le tableau t (t = n * n//2)
-    - Le nombre de bombe (définite sur 15 par défaut).
-        Dans le cas ou le bombre de bombes dépasse le nombre de cases disponible, le nombre de bombes sera égale a l'entier 
+    - La longueur n (définie sur 40 par défaut dans Game), qui définis le tableau t (t = n * n//2)
+    - Le nombre de bombes (définies sur 15 par défaut).
+        Dans le cas ou le nombre de bombes dépasse le nombre de cases disponible, le nombre de bombes sera égale a l'entier 
         inférieur au nombre de case divisé par 8 ((longueur*largeur)//2)
     """
+
     def __init__ (self, long, nbomb = 15):
         self.grid = [[-1 for x in range(long)] for y in range(long//2)]
         self.bombGrid = [[0 for x in range(long)] for y in range(long//2)]
@@ -23,14 +24,14 @@ class Grille(object):
             while True:
                 y = random.randint(0, len(self.bombGrid) - 1) #entre 0 et n-1 sur l'axe y (hauteur)
                 x = random.randint(0, len(self.bombGrid[1]) - 1) #entre 0 et n-1 sur l'axe x (largeur)
-                if self.bombGrid[y][x] == 1:
+                if self.bombGrid[y][x] == 1: #si la case est déjà occupée, on recommence
                     continue
                 self.bombGrid[y][x] = 1
                 break
 
     def numberNeighborBomb(self, x, y):
         """
-        Donne le nombre de bombes dans les voisins de la grille en coordonnée y / x
+        Donne le nombre de bombes dans les cases voisinses de la grille en coordonnées y / x
         """
         nb = 0
         nb += 1 if x > 0 and self.bombGrid[y][x-1] == 1 else 0 #gauche
@@ -45,7 +46,7 @@ class Grille(object):
 
     def propagation(self, case):
         """
-        Regarde si une case vide est cliqué et propage l'ouverture des cases situés à coté qui sont aussi vides si c'est le cas.
+        Permet de faire apparaitre les bombes ou les cases vides dans les cases voisines de la case en coordonnées y / x.
         """
         y, x = case
         self.grid[y][x] = self.numberNeighborBomb(x, y)
@@ -75,3 +76,19 @@ class Grille(object):
 
         if x < len(self.bombGrid[0]) - 1 and y < len(self.bombGrid) - 1 and self.grid[y+1][x+1] == -1: #bas droit
             self.propagation((y+1, x+1))
+
+    def updateGameOver(self):
+        """
+        Met à jour la grille en fonction de la fin de la partie.
+        """
+        for y in range(len(self.grid)):
+            for x in range(len(self.grid[0])):
+                if self.bombGrid[y][x] == 1:
+                    if self.grid[y][x] == -1 or self.grid[y][x] == -2:
+                        self.grid[y][x] = -4
+                else:
+                    if self.grid[y][x] == -2:
+                        self.grid[y][x] = -6
+                    else:
+                        self.grid[y][x] = 0
+

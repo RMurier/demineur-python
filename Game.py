@@ -7,16 +7,16 @@ from ScoreBoard import ScoreBoard
 
 class Game(object):
 
-    def __init__(self, long=40):
+    def __init__(self, long = 40):
         """
         Permet l'initialisation du jeu.
         """
         self.scoreboard = ScoreBoard()
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
-        self.gui.stopTime()
-        self.grid = Grille(long, 15)
-        self.flagputted = 0
-        self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
+        self.gui.stopTime() 
+        self.grid = Grille(long, 99) #créer une instance de Grille
+        self.flagputted = 0 #nombre de drapeaux placés
+        self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0) #refresh la grille
         
     def start(self):
         """
@@ -38,6 +38,8 @@ class Game(object):
                     self.grid.grid[y][x] = -1
                 self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
             elif clic == "G": #si clic gauche
+                if not self.gui.chronoIsEnable():
+                    self.gui.startTime()
                 coosBefore = (x, y)
                 if self.grid.grid[y][x] == -1:
                     pass
@@ -49,25 +51,28 @@ class Game(object):
                             self.grid.grid[y][x] = -5
                             self.gui.gameOver()
                             self.gui.stopTime()
+                            self.grid.updateGameOver()
+                            self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
                             time.sleep(1)
                         else:
                             self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
                             self.grid.propagation((y, x))
-                            if self.isWin(): #si fin de partie
+                            if self.isWon(): #si fin de partie
                                 self.gui.gagne()
                                 self.gui.stopTime()
                                 time.sleep(2)
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
     
-    def isWin(self):
+    def isWon(self):
+        """
+        Permet de savoir si le joueur a gagné ou non.
+        """
         for y in range(len(self.grid.bombGrid)):
             for x in range(len(self.grid.bombGrid[0])):
                 if self.grid.grid[y][x] == -1 and self.grid.bombGrid[y][x] != 1:
                     return False
         return True
-
-            
-
+                
 
 if __name__ == '__main__' :
     m = Game()

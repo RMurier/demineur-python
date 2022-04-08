@@ -1,3 +1,4 @@
+from socketserver import DatagramRequestHandler
 import pygame
 from pygame.locals import *
 import os
@@ -65,14 +66,10 @@ class ScoreBoard(object):
 
         #bouton classement
         pygame.Rect((GetSystemMetrics(0)//2-250, GetSystemMetrics(1), 500, 50))
-        self.imgclassment = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
+        self.imgclassment = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.png")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
         self.rect1 = self.rect2 = self.rect3 = self.rect4 = self.rect5 = None
         #bouton dans le menu classement
         self.returnhome = None
-
-        #curseur
-        pygame.mouse.set_visible(False)  # hide the cursor
-        self.cursor = pygame.image.load(os.path.join(os.path.dirname(__file__), 'cursor.png')).convert_alpha()
 
         self.update()
         self.draw()
@@ -81,17 +78,10 @@ class ScoreBoard(object):
 
     def waitClick(self):
         while True:
-            pygame.time.Clock().tick(10)
-
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     exit()
-
-                if event.type == pygame.MOUSEMOTION:
-                    self.draw()
-                    self.screen.blit(self.cursor, (pygame.mouse.get_pos()))
-                    pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.imgplay.collidepoint(event.pos):
                         self.username = self.username.lower()
@@ -106,42 +96,42 @@ class ScoreBoard(object):
                         return
                     elif self.imgclassment.collidepoint(event.pos):
                         self.showScoreBoard()
-
+                        self.draw()
+                        pygame.display.update()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_BACKSPACE:
-                        self.username = self.username[:-1]
+                    if len(self.username) < 15 :
+                        if event.key == pygame.K_BACKSPACE:
+                            self.username = self.username[:-1]
+                                      
+                        else:
+                            self.username += username_re.sub("", event.unicode)
+                            
+                        self.txt_surface = self.font.render(self.username, True, self.color)
                         self.update()
-                        
-                    else:
-                        self.username += username_re.sub("", event.unicode)
-                    self.txt_surface = self.font.render(self.username, True, self.color)
-                    self.update()
-                else:
-                    break
 
-                self.screen.blit(self.txt_surface, (self.rectinput.x + 5, self.rectinput.y + 10))
-                pygame.draw.rect(self.screen, self.color, self.rectinput, 1)
+                        pygame.draw.rect(self.screen, self.color, self.rectinput, 1)
+                        pygame.display.update()
     
     def update(self):
         self.rectinput.w = max(500, self.txt_surface.get_width()+10)
+        self.rectinput.left = GetSystemMetrics(0)//2-self.rectinput.width//2
         if self.rectinput.w == 500:
             self.draw()
-        self.rectinput.left = GetSystemMetrics(0)//2-self.rectinput.width//2
 
     def draw(self):
         self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\welcome.png")) ,(GetSystemMetrics(0), GetSystemMetrics(1))), [0, 0])
         self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\play.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.35))
-        self.imgclassment = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
+        self.imgclassment = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.png")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
         pygame.draw.rect(self.screen, self.colorinput, self.rectinput, 0, 12)
         self.screen.blit(self.txt_surface, (self.rectinput.x+5, self.rectinput.y+5))
 
     def showScoreBoard(self):
         self.screen.blit(pygame.transform.scale( pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\welcome.png")) ,(GetSystemMetrics(0), GetSystemMetrics(1))), [0, 0])
-        self.returnhome = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
+        self.returnhome = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\retour.png")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
         scoreboard = self.scoreboard()
         for i in range(len(scoreboard)):
             rect = pygame.Rect(GetSystemMetrics(0)//4, GetSystemMetrics(1)//2+i*50, 100, 50)
-            text = self.font.render(f"{scoreboard[i][0]} a terminé le démineur en {convert_time(scoreboard[i][1])}", True, self.colorinput)
+            text = self.font.render(f"{scoreboard[i][0]} a terminé le démineur en {convert_time(scoreboard[i][1])}", True, pygame.Color(255, 255, 255))
             self.screen.blit(text, rect)
         self.waitClickScoreBoard()
 
@@ -155,7 +145,6 @@ class ScoreBoard(object):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.returnhome.collidepoint(event.pos):
                         return
-            pygame.display.update()
 
     def scoreboard(self):
         """
