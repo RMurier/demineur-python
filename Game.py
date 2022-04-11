@@ -11,8 +11,9 @@ class Game(object):
         Permet l'initialisation du jeu.
         """
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
-        self.grid = Grille(long, 99) #créer une instance de Grille
+        self.grid = Grille(long, 10) #créer une instance de Grille
         self.flagputted = 0 #nombre de drapeaux placés
+        self.firstclick = True
         self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0) #refresh la grille
         
     def start(self):
@@ -45,28 +46,37 @@ class Game(object):
                 if coosBefore == (x, y):
                     if self.grid.grid[y][x] == -1:
                         if self.grid.bombGrid[y][x] == 1: #si click sur une bombe
-                            self.grid.grid[y][x] = -5
-                            self.gui.gameOver()
-                            self.gui.stopTime()
-                            self.grid.updateGameOver()
-                            self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
-                            time.sleep(1)
+                            if self.firstclick: #si premier click, pas possible de tomber sur une bombe
+                                self.grid.bombGrid[y][x] = 0
+                                self.grid.addNewBomb(y, x)
+                                self.firstclick = False
+                                self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
+                            else:
+                                self.grid.grid[y][x] = -5
+                                self.gui.gameOver()
+                                self.gui.stopTime()
+                                time.sleep(1)
+                                for i in range(len(self.grid.grid)):
+                                    self.grid.updateGameOver(i)
+                                    self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
+                                    time.sleep(0.5)
                         else:
                             self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
                             self.grid.propagation((y, x))
                             if self.isWon(): #si fin de partie
-                                self.gui.gagne()
                                 self.gui.stopTime()
-                                time.sleep(2)
+                                self.gui.gagne()
+                                time.sleep(3)
+                                self.gui.addScore(self.gui.getTime())
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
 
     def isWon(self):
         """
         Permet de savoir si le joueur a gagné ou non
         """
-        for i in range(len(self.grid.grid)):
-            for j in range(len(self.grid.grid[i])):
-                if self.grid.grid[i][j] == -1:
+        for y in range(len(self.grid.grid)):
+            for x in range(len(self.grid.grid[1])):
+                if self.grid.grid[y][x] == -1 and self.grid.bombGrid[y][x] == 0:
                     return False
         return True
                 

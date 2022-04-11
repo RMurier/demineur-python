@@ -44,7 +44,6 @@ class GUIdemineur (ScoreBoard):
         self.rectG = pygame.Rect(0, 0, self.wFen //3, self.hBandeau)
         self.rectC = pygame.Rect(self.wFen //3, 0, self.wFen //3, self.hBandeau)
         self.rectD = pygame.Rect(2*self.wFen //3, 0, self.wFen //3, self.hBandeau)
-
         #une liste contenant les différentes cases possibles de vide à 32768
         self.cases = [self._creerCase(i) for i in range(-6, 9)]
         
@@ -59,8 +58,11 @@ class GUIdemineur (ScoreBoard):
         self.refresh()
         
     def _updateTime(self):
+        """
+        Permet de mettre à jour le chronomètre
+        """
         self.gameTime = pygame.time.get_ticks() - self.memoTime
-        
+                
     def resetTime(self):
         """
         Permet de remettre le chronomètre à zéro
@@ -79,6 +81,7 @@ class GUIdemineur (ScoreBoard):
         Stop le défilement du chronomètre
         """        
         self._enableTime = False
+        self.memoTime = self.gameTime
         
     def startTime(self):
         """

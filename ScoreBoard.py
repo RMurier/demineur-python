@@ -47,7 +47,7 @@ class ScoreBoard(object):
         self.usernameError = False
 
         pygame.init()
-        self.screen = pygame.display.set_mode((GetSystemMetrics(0), GetSystemMetrics(1)), FULLSCREEN) #création de la fênêtre
+        self.screen = pygame.display.set_mode((GetSystemMetrics(0), GetSystemMetrics(1))) #création de la fênêtre
         pygame.display.set_caption("Démineur") #nom de la fenêtre
         self.font = pygame.font.Font(os.path.join(os.path.dirname(__file__), "input.ttf"), 32) #police / taille du texte
         
@@ -93,6 +93,7 @@ class ScoreBoard(object):
                             self.screen.blit(text, rect)
                             pygame.display.update()
                             continue
+                        self.fetchUser()
                         return
                     elif self.imgclassment.collidepoint(event.pos):
                         self.showScoreBoard()
@@ -129,9 +130,14 @@ class ScoreBoard(object):
         self.screen.blit(pygame.transform.scale( pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\welcome.png")) ,(GetSystemMetrics(0), GetSystemMetrics(1))), [0, 0])
         self.returnhome = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\retour.png")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
         scoreboard = self.scoreboard()
-        for i in range(len(scoreboard)):
-            rect = pygame.Rect(GetSystemMetrics(0)//4, GetSystemMetrics(1)//2+i*50, 100, 50)
-            text = self.font.render(f"{scoreboard[i][0]} a terminé le démineur en {convert_time(scoreboard[i][1])}", True, pygame.Color(255, 255, 255))
+        if len(scoreboard) > 0:
+            for i in range(len(scoreboard)):
+                rect = pygame.Rect(GetSystemMetrics(0)//4, GetSystemMetrics(1)//2+i*50, 100, 50)
+                text = self.font.render(f"{scoreboard[i][0]} a terminé le démineur en {convert_time(scoreboard[i][1])}", True, pygame.Color(255, 255, 255))
+                self.screen.blit(text, rect)
+        else:
+            rect = pygame.Rect(GetSystemMetrics(0)//4, GetSystemMetrics(1)//2, 100, 50)
+            text = self.font.render(f"Aucun score n'a été enregistré !", True, pygame.Color(255, 255, 255))
             self.screen.blit(text, rect)
         self.waitClickScoreBoard()
 
@@ -157,14 +163,15 @@ class ScoreBoard(object):
         Récupère le joueur, ou l'ajoute en base de donnée si il n'existe pas
         """
         if database_handler.userExist(self.username):
-            self.userid, self.username = database_handler.getUser(self.username)
-            return print(self.username, self.userid)
+            self.userid = database_handler.getUser(self.username)
+
         self.userid = database_handler.createUser(self.username)
 
     def addScore(self, score):
         """
         Ajoute une entrée en base de donnée contenant le score lié à l'ID de l'utilisateur qui joue.
         """
+        database_handler.insertScore(self.userid, score)
 
 if __name__ == "__main__":
     s = ScoreBoard()

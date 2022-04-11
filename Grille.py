@@ -77,18 +77,28 @@ class Grille(object):
         if x < len(self.bombGrid[0]) - 1 and y < len(self.bombGrid) - 1 and self.grid[y+1][x+1] == -1: #bas droit
             self.propagation((y+1, x+1))
 
-    def updateGameOver(self):
+    def updateGameOver(self, y):
         """
         Met à jour la grille en fonction de la fin de la partie.
         """
-        for y in range(len(self.grid)):
-            for x in range(len(self.grid[0])):
-                if self.bombGrid[y][x] == 1:
-                    if self.grid[y][x] == -1 or self.grid[y][x] == -2:
-                        self.grid[y][x] = -4
+        for x in range(len(self.grid[0])):
+            if self.bombGrid[y][x] == 1:
+                if self.grid[y][x] == -1 or self.grid[y][x] == -2:
+                    self.grid[y][x] = -4
+            else:
+                if self.grid[y][x] == -2:
+                    self.grid[y][x] = -6
                 else:
-                    if self.grid[y][x] == -2:
-                        self.grid[y][x] = -6
-                    else:
-                        self.grid[y][x] = 0
+                    self.grid[y][x] = 0
+
+    def addNewBomb(self, yb, xb):
+        """
+        Permet d'ajouter une nouvelle bombe sur la grille.
+        """
+        while True:
+            x = random.randint(0, len(self.bombGrid[0]) - 1)
+            y = random.randint(0, len(self.bombGrid) - 1)
+            if self.bombGrid[y][x] == 0 and (y, x) != (yb, xb):
+                self.bombGrid[y][x] = 1
+                break
 
