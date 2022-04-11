@@ -4,7 +4,6 @@ from pygame.locals import *
 import os
 from win32api import GetSystemMetrics
 import re
-import time
 
 from Data.database_handler import DataBaseHandler
 database_handler = DataBaseHandler("madb.db")
@@ -48,7 +47,8 @@ class ScoreBoard(object):
         self.usernameError = False
 
         pygame.init()
-        self.screen = pygame.display.set_mode((GetSystemMetrics(0), GetSystemMetrics(1)), RESIZABLE) #création de la fênêtre
+        self.screen = pygame.display.set_mode((GetSystemMetrics(0), GetSystemMetrics(1)), FULLSCREEN) #création de la fênêtre
+        pygame.display.set_caption("Démineur") #nom de la fenêtre
         self.font = pygame.font.Font(os.path.join(os.path.dirname(__file__), "input.ttf"), 32) #police / taille du texte
         
         #input:
@@ -74,9 +74,9 @@ class ScoreBoard(object):
         self.update()
         self.draw()
         pygame.display.update()
-        self.waitClick()
+        self.waitClickSC()
 
-    def waitClick(self):
+    def waitClickSC(self):
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:

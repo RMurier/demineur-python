@@ -9,9 +9,10 @@ import pygame
 from pygame.locals import *
 #pour le rendre dispo de n'importe où
 import os
+from ScoreBoard import *
 pathname = os.path.dirname(__file__)
 
-class GUIdemineur (object):
+class GUIdemineur (ScoreBoard):
     
     def __init__(self, nb, w):
         """
@@ -21,6 +22,7 @@ class GUIdemineur (object):
         V2 : gere l'horloge du jeu avec rafraichissement automatique dans la méthode waitClick
         
         """
+        super().__init__()
         
         #des constantes pour le dessin de la grille
         self.nbx = nb #la taille de la grille
@@ -42,11 +44,7 @@ class GUIdemineur (object):
         self.rectG = pygame.Rect(0, 0, self.wFen //3, self.hBandeau)
         self.rectC = pygame.Rect(self.wFen //3, 0, self.wFen //3, self.hBandeau)
         self.rectD = pygame.Rect(2*self.wFen //3, 0, self.wFen //3, self.hBandeau)
-        #on définit la fenêtre de base de notre jeu
-        self.fond = pygame.display.set_mode((self.wFen, hFen), RESIZABLE)
-        #un titre sur cette fenêtre
-        pygame.display.set_caption("Démineur")
-
+        
         #une liste contenant les différentes cases possibles de vide à 32768
         self.cases = [self._creerCase(i) for i in range(-6, 9)]
         
@@ -57,6 +55,7 @@ class GUIdemineur (object):
         self.memoTime = 0
         self.gameTime = 0
         self._enableTime = False
+
         self.refresh()
         
     def _updateTime(self):
@@ -195,27 +194,27 @@ class GUIdemineur (object):
         else:
             self.memoEmo = emo
 
-        self.fond.fill(pygame.Color("#BCAF9F"))
+        self.screen.fill(pygame.Color("#BCAF9F"))
         for y in range(self.nby):
             for x in range(self.nbx):
-                self.fond.blit(self.cases[g[y][x] + 6], (self.xy0[x], self.xy0[y] + self.hBandeau)) 
+                self.screen.blit(self.cases[g[y][x] + 6], (self.xy0[x], self.xy0[y] + self.hBandeau)) 
         #le score :
         police = pygame.font.Font(os.path.join(pathname, "led.ttf"), self.wPol2 // 2)        
         txtScore = police.render(str(self.getTime()), True, 'yellow')
         rectTxt = txtScore.get_rect()
         rectTxt.center = self.rectD.center
-        self.fond.blit(txtScore, rectTxt)
+        self.screen.blit(txtScore, rectTxt)
         
         txtMines = police.render(str(mine), True, 'yellow')
         rectTxt2 = txtMines.get_rect()
         rectTxt2.center = self.rectG.center
-        self.fond.blit(txtMines, rectTxt2)
+        self.screen.blit(txtMines, rectTxt2)
 
 
         emoji = pygame.image.load(os.path.join(pathname, F"emoji_{emo}.png")).convert_alpha()
         self.rectEmo = emoji.get_rect()
         self.rectEmo.center = self.rectC.center
-        self.fond.blit(emoji, self.rectEmo)
+        self.screen.blit(emoji, self.rectEmo)
                 
         #Rafraîchissement de l'écran
         pygame.display.update()
@@ -224,13 +223,13 @@ class GUIdemineur (object):
         """
         Cette méthode permet d'afficher GAME OVER plein écran sur fond rouge.
         """
-        self.fond.fill("green")
+        self.screen.fill("green")
         police = pygame.font.Font(os.path.join(pathname, "led.ttf"),int (self.wPol2))
         texte = police.render("GAGNE !!", True, pygame.Color("#FFFF00"))
         #pour centrer le texte
         rectTexte = texte.get_rect()
-        rectTexte.center = self.fond.get_rect().center
-        self.fond.blit(texte,rectTexte)
+        rectTexte.center = self.screen.get_rect().center
+        self.screen.blit(texte,rectTexte)
         #Rafraîchissement de l'écran
         pygame.display.update()
 
@@ -238,13 +237,13 @@ class GUIdemineur (object):
         """
         Cette méthode permet d'afficher GAME OVER plein écran sur fond rouge.
         """
-        self.fond.fill("red")
+        self.screen.fill("red")
         police = pygame.font.Font(os.path.join(pathname, "led.ttf"),int (self.wPol2))
         texte = police.render("GAME OVER", True, pygame.Color("#FFFF00"))
         #pour centrer le texte
         rectTexte = texte.get_rect()
-        rectTexte.center = self.fond.get_rect().center
-        self.fond.blit(texte,rectTexte)
+        rectTexte.center = self.screen.get_rect().center
+        self.screen.blit(texte,rectTexte)
         #Rafraîchissement de l'écran
         pygame.display.update()
         

@@ -3,7 +3,6 @@ import time
 
 from GUI_demineur.guiDemineur_V2 import *
 from Grille import Grille
-from ScoreBoard import ScoreBoard
 
 class Game(object):
 
@@ -11,7 +10,6 @@ class Game(object):
         """
         Permet l'initialisation du jeu.
         """
-        self.scoreboard = ScoreBoard() #initialisation du scoreboard
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
         self.grid = Grille(long, 99) #créer une instance de Grille
         self.flagputted = 0 #nombre de drapeaux placés
@@ -61,14 +59,14 @@ class Game(object):
                                 self.gui.stopTime()
                                 time.sleep(2)
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
-    
+
     def isWon(self):
         """
-        Permet de savoir si le joueur a gagné ou non.
+        Permet de savoir si le joueur a gagné ou non
         """
-        for y in range(len(self.grid.bombGrid)):
-            for x in range(len(self.grid.bombGrid[0])):
-                if self.grid.grid[y][x] == -1 and self.grid.bombGrid[y][x] != 1:
+        for i in range(len(self.grid.grid)):
+            for j in range(len(self.grid.grid[i])):
+                if self.grid.grid[i][j] == -1:
                     return False
         return True
                 
