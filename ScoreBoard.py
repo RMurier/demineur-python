@@ -164,7 +164,7 @@ class ScoreBoard(object):
         """
         if database_handler.userExist(self.username):
             self.userid = database_handler.getUser(self.username)
-
+            return
         self.userid = database_handler.createUser(self.username)
 
     def addScore(self, score):

@@ -16,7 +16,7 @@ class DataBaseHandler():
         result = cursor.fetchone()
         cursor.close()
         for elem in result:
-            return elem != 0
+            return elem == 1
 
     def getUser(self, username: str):
         cursor = self.con.cursor()

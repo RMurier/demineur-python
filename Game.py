@@ -60,7 +60,10 @@ class Game(object):
                                     self.grid.updateGameOver(i)
                                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
                                     time.sleep(0.5)
+                                break #fin de partie, sort de la boucle
                         else:
+                            if self.firstclick:
+                                self.firstclick = False
                             self.grid.grid[y][x] = self.grid.numberNeighborBomb(x, y)
                             self.grid.propagation((y, x))
                             if self.isWon(): #si fin de partie
@@ -68,6 +71,7 @@ class Game(object):
                                 self.gui.gagne()
                                 time.sleep(3)
                                 self.gui.addScore(self.gui.getTime())
+                                break #fin de partie, sort de la boucle
                     self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0)
 
     def isWon(self):
@@ -79,6 +83,12 @@ class Game(object):
                 if self.grid.grid[y][x] == -1 and self.grid.bombGrid[y][x] == 0:
                     return False
         return True
+
+    def isRestart(self):
+        """
+        Permet de savoir si le joueur veut recommencer ou non
+        """
+        pass
                 
 
 if __name__ == '__main__' :
