@@ -27,8 +27,8 @@ class GUIdemineur (ScoreBoard):
         #des constantes pour le dessin de la grille
         self.nbx = nb #la taille de la grille
         self.nby = nb // 2 #la taille de la grille
-        self.w = w #largeur d'une case
-        self.d = self.w // 10 #entre deux cases
+        self.w = self.screen.get_width()//nb-3 #largeur d'une case
+        self.d = 3 #entre deux cases
         self.wPol = int(self.w / 1.5) #taille de base des polices
         self.wPol2 = (nb * w) // 10 
         #la liste des coordonnées de chaque case de la grille (coordonnées du coin en haut à gauche)
@@ -44,7 +44,7 @@ class GUIdemineur (ScoreBoard):
         self.rectG = pygame.Rect(0, 0, self.wFen //3, self.hBandeau)
         self.rectC = pygame.Rect(self.wFen //3, 0, self.wFen //3, self.hBandeau)
         self.rectD = pygame.Rect(2*self.wFen //3, 0, self.wFen //3, self.hBandeau)
-        
+
         #une liste contenant les différentes cases possibles de vide à 32768
         self.cases = [self._creerCase(i) for i in range(-6, 9)]
         
