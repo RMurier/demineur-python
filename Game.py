@@ -11,9 +11,8 @@ class Game(object):
         """
         Permet l'initialisation du jeu.
         """
-        self.scoreboard = ScoreBoard()
+        self.scoreboard = ScoreBoard() #initialisation du scoreboard
         self.gui = GUIdemineur(long, 32) #créer une instance de guiDemineur_V2
-        self.gui.stopTime() 
         self.grid = Grille(long, 99) #créer une instance de Grille
         self.flagputted = 0 #nombre de drapeaux placés
         self.gui.refresh(self.grid.grid, self.grid.nbBomb - self.flagputted, 0) #refresh la grille

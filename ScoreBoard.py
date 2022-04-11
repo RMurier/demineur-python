@@ -62,7 +62,7 @@ class ScoreBoard(object):
 
         #bouton play
         pygame.Rect((GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.5, 500, 50))
-        self.imgplay = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\play.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.3))
+        self.imgplay = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\play.png")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.3))
 
         #bouton classement
         pygame.Rect((GetSystemMetrics(0)//2-250, GetSystemMetrics(1), 500, 50))
@@ -120,7 +120,7 @@ class ScoreBoard(object):
 
     def draw(self):
         self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\welcome.png")) ,(GetSystemMetrics(0), GetSystemMetrics(1))), [0, 0])
-        self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\play.webp")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.35))
+        self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\play.png")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.35))
         self.imgclassment = self.screen.blit(pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(__file__), "src\\images\\classement.png")), (500, 100)), (GetSystemMetrics(0)//2-250, GetSystemMetrics(1)//1.17))
         pygame.draw.rect(self.screen, self.colorinput, self.rectinput, 0, 12)
         self.screen.blit(self.txt_surface, (self.rectinput.x+5, self.rectinput.y+5))
